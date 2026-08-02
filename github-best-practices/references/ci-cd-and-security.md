@@ -10,6 +10,12 @@ gh run view <run-id> --log-failed          # jump straight to what failed
 
 Gate on **exit codes**. Hand-rolled `gh pr checks | jq` loops re-derive undocumented state semantics and hit the classic race: polled immediately after a push, "0 pending" means "runs not yet registered", not "all green". If you must hand-roll, gate on a *named required check reaching a terminal state on the current head SHA* — never on a zero-pending count.
 
+**`gh pr checks --watch` itself is not immune to this race.** Called within a few seconds of a push (before the workflow run has registered on the PR), it can exit immediately with `no checks reported on the '<branch>' branch` instead of waiting — the exact failure mode this section warns against, just surfaced as a hard error rather than a silent false-green. Treat that specific message as "not registered yet," not "no CI configured": wait a few seconds and retry once before concluding the PR genuinely has no checks.
+
+```bash
+gh pr checks <num> --watch --fail-fast || { sleep 5; gh pr checks <num> --watch --fail-fast; }
+```
+
 When CI fails: read the failing step's log (`--log-failed`), reproduce locally, fix, push once. Don't push speculative fixes to "see if CI likes it" — each push burns a full CI cycle and spams reviewers.
 
 ## GitHub Actions: workflow hygiene
