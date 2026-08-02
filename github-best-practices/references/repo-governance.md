@@ -4,6 +4,17 @@ Setting up a repo so best practices are enforced by the platform, not by vigilan
 
 ## Branch protection / rulesets
 
+**Check plan tier before attempting this.** Branch protection and rulesets are unavailable on **private** repos under GitHub Free — both the rulesets and classic-protection APIs return `403 Upgrade to GitHub Pro or make this repository public`. Public repos get this feature on every tier. Detect it rather than assuming:
+
+```bash
+gh api repos/{owner}/{repo}/rulesets -X POST --input ruleset.json
+# 403 with "Upgrade to GitHub Pro" -> plan doesn't allow it on this private repo.
+# Tell the user their options: upgrade the account/org, make the repo public,
+# or accept that protection is enforced by convention (CONTRIBUTING.md, review
+# habit) rather than by the platform until then. Don't silently skip governance
+# without saying why.
+```
+
 Prefer **rulesets** (newer, layerable, can apply org-wide and to tag patterns) over classic branch protection where available. Enterprise baseline for the default branch:
 
 - **Require a pull request before merging** — ≥1 approval (2 for high-stakes repos); **dismiss stale approvals on new commits**; **require review from Code Owners** if CODEOWNERS exists.

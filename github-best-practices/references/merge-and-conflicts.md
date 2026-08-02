@@ -8,7 +8,7 @@ All of these before merging — no exceptions without explicit user override:
 gh pr view <num> --json reviewDecision,mergeable,mergeStateStatus,statusCheckRollup
 ```
 
-1. **Required approvals present** (`reviewDecision: APPROVED`).
+1. **Required approvals present** (`reviewDecision: APPROVED`). If `reviewDecision` comes back as an **empty string** rather than `APPROVED`/`REVIEW_REQUIRED`/`CHANGES_REQUESTED`, that means the repo has no review requirement configured (often because branch protection isn't available on this plan/repo — see repo-governance.md) — it is not evidence that reviews are unnecessary. Confirm with the user whether to proceed without an enforced approval, and say explicitly that the platform isn't gating this.
 2. **All review threads resolved** — verify via the GraphQL `reviewThreads` query (pr-review.md §5), not memory. If bot reviewers re-review per push, their review of the *current head SHA* must exist first.
 3. **Required checks green on the current head** — `gh pr checks <num> --watch --fail-fast`. Gate on the exit code, not parsed output. Beware the stale-SHA trap: immediately after a push, a check-count of "0 pending" can mean "runs not registered yet", not "all passed". Confirm the checks belong to the head SHA you're about to merge.
 4. **Branch up to date with base** if the repo requires it (`mergeStateStatus: BLOCKED` vs `BEHIND` tells you which gate is failing).
@@ -44,7 +44,9 @@ git diff                                # conflict markers in context
 git log --oneline origin/<default> -5 -- <file>   # what changed upstream and why
 # edit; a correct resolution often combines both intents, not "pick mine"
 git add <file>
-git rebase --continue
+# In a non-interactive/scripted/agent context, `rebase --continue` opens a commit-
+# message editor and hangs waiting for input if none is configured. Skip the prompt:
+GIT_EDITOR=true git rebase --continue
 # run the test suite BEFORE pushing — a clean-merging resolution can still be wrong
 git push --force-with-lease
 ```
