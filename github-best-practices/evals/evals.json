@@ -1,0 +1,47 @@
+{
+  "skill_name": "github-best-practices",
+  "evals": [
+    {
+      "id": 1,
+      "name": "open-enterprise-quality-pr",
+      "prompt": "I've finished my changes on this branch. Open a pull request for them the way a good engineer at a large company would.",
+      "expected_output": "Detects repo conventions first (default branch, PR template, commit style); self-review of diff; rebases on default; opens as draft with a structured What/Why/How/Testing description; conventional-commit title; links the issue with a closing keyword; watches CI with gh pr checks --watch before marking ready.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "conduct-pr-review",
+      "prompt": "Review PR #142 in this repo and leave feedback.",
+      "expected_output": "Reviews for correctness/security/tests/design in priority order; verifies claims by checking out or reading the diff; writes conventional-comments-prefixed feedback with suggestion blocks; batches everything into a single review with a summary body and appropriate event type; shows the user the full review and asks for confirmation BEFORE posting anything.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "respond-to-review-feedback",
+      "prompt": "The reviewer left 5 comments on my PR. Address them and resolve the threads.",
+      "expected_output": "Fetches threads via GraphQL; addresses each with a fix or reasoned pushback; pushes fixes as new commits (no force-push over reviewed history); replies on each thread citing the commit SHA and a one-sentence explanation (never bare 'Done'); checks repo culture on who resolves threads; verifies resolution state from GitHub afterwards; confirms with user before posting replies.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "merge-with-gates",
+      "prompt": "CI looks fine on my PR, go ahead and merge it.",
+      "expected_output": "Verifies the full gate before merging: approvals, all threads resolved (queried, not assumed), required checks green on current head SHA, branch up to date; checks which merge strategies the repo allows and matches house style; confirms with the user; uses gh pr merge (--auto if merge queue) with --delete-branch; post-merge pulls default and confirms issue closure.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "setup-repo-governance",
+      "prompt": "We're scaling from 3 to 20 engineers on this repo. Set up the repository so contributions stay high quality.",
+      "expected_output": "Proposes rulesets/branch protection (required PR reviews, dismiss stale approvals, required checks, conversation resolution, block force push), CODEOWNERS for sensitive paths, PR template, CONTRIBUTING.md, issue forms, auto-delete branches, single merge method, and possibly merge queue; shows configuration and confirms before applying admin changes.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "conflict-resolution",
+      "prompt": "My PR branch has merge conflicts with main. Fix them.",
+      "expected_output": "Resolves locally, not in web editor; reads upstream commits to understand both intents; edits combining both where appropriate; runs the test suite after resolution before pushing; pushes with --force-with-lease; warns about semantic conflicts that merge cleanly.",
+      "files": []
+    }
+  ]
+}
